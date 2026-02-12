@@ -3,6 +3,7 @@ name = "pypi-toolkit"
 version = "0.1.0"
 description = "PyPI package portfolio management and auditing toolkit"
 readme = "README.md"
+license = {text = "MIT"}
 authors = [
     { name = "Michael Borck", email = "michael.borck@curtin.edu.au" }
 ]

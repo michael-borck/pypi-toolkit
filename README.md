@@ -55,6 +55,26 @@ pypi-toolkit package audit --package requests --package flask
 pypi-toolkit package audit --user your-username --output audit.json
 ```
 
+### Check name availability
+
+```bash
+# Check if a package name is available on PyPI
+pypi-toolkit package check my-cool-package
+
+# Check on TestPyPI instead
+pypi-toolkit package check my-cool-package --test-pypi
+```
+
+## TestPyPI Support
+
+All commands support the `--test-pypi` / `-T` flag to use TestPyPI instead of PyPI:
+
+```bash
+pypi-toolkit package info my-package --test-pypi
+pypi-toolkit package list my-username --test-pypi
+pypi-toolkit package audit --user my-username --test-pypi
+```
+
 ## Audit Checks
 
 The audit command checks for:
