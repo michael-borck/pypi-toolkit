@@ -5,7 +5,7 @@ from rich.console import Console
 from rich.table import Table
 
 from pypi_toolkit import __version__
-from pypi_toolkit.commands.package import audit, info, list_packages
+from pypi_toolkit.commands.package import audit, check_name, info, list_packages
 
 app = typer.Typer(
     name="pypi-toolkit",
@@ -42,6 +42,7 @@ def main(
 package_app.command("list")(list_packages)
 package_app.command("info")(info)
 package_app.command("audit")(audit)
+package_app.command("check")(check_name)
 
 
 if __name__ == "__main__":

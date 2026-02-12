@@ -12,6 +12,31 @@ from rich.table import Table
 
 from pypi_toolkit.core.pypi_client import PyPIClient, PyPIAPIError
 
+def check_name(
+    name: str = typer.Argument(help="Package name to check"),
+    test_pypi: bool = typer.Option(
+        False, "--test-pypi", "-T", help="Check TestPyPI instead of PyPI"
+    ),
+) -> None:
+    """Check if a package name exists on PyPI or TestPyPI.
+
+    Useful to check name availability before publishing.
+    """
+    client = PyPIClient(test_pypi=test_pypi)
+    index_name = "TestPyPI" if test_pypi else "PyPI"
+
+    try:
+        pkg = client.get_package(name)
+        console.print(f"[red]✗ '{name}' exists on {index_name}[/red]")
+        console.print(f"  Version: {pkg.version}")
+        console.print(f"  Author: {pkg.author or 'Unknown'}")
+        console.print(f"  URL: {pkg.package_url}")
+    except PyPIAPIError as e:
+        if e.status_code == 404:
+            console.print(f"[green]✓ '{name}' is available on {index_name}[/green]")
+        else:
+            console.print(f"[yellow]? Error checking '{name}': {e.message}[/yellow]")
+
 console = Console()
 
 
