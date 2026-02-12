@@ -72,10 +72,17 @@ class PackageInfo:
 class PyPIClient:
     """Client for interacting with the PyPI API."""
 
-    BASE_URL = "https://pypi.org/pypi"
+    PYPI_URL = "https://pypi.org/pypi"
+    TEST_PYPI_URL = "https://test.pypi.org/pypi"
 
-    def __init__(self) -> None:
-        """Initialize the PyPI client."""
+    def __init__(self, test_pypi: bool = False) -> None:
+        """Initialize the PyPI client.
+
+        Args:
+            test_pypi: If True, use TestPyPI instead of PyPI
+        """
+        self.test_pypi = test_pypi
+        self.base_url = self.TEST_PYPI_URL if test_pypi else self.PYPI_URL
         self.session = requests.Session()
         self.session.headers.update({
             "Accept": "application/json",
@@ -94,7 +101,7 @@ class PyPIClient:
         Raises:
             PyPIAPIError: If the API request fails
         """
-        url = f"{self.BASE_URL}/{package_name}/json"
+        url = f"{self.base_url}/{package_name}/json"
 
         try:
             response = self.session.get(url, timeout=30)
@@ -145,7 +152,8 @@ class PyPIClient:
         # PyPI XML-RPC API for user packages
         import xmlrpc.client
 
-        client = xmlrpc.client.ServerProxy("https://pypi.org/pypi")
+        xmlrpc_url = "https://test.pypi.org/pypi" if self.test_pypi else "https://pypi.org/pypi"
+        client = xmlrpc.client.ServerProxy(xmlrpc_url)
         try:
             # Get packages where user is listed as maintainer or author
             packages = client.user_packages(username)

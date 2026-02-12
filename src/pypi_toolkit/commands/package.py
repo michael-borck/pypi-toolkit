@@ -20,12 +20,16 @@ def list_packages(
     output: str | None = typer.Option(
         None, "--output", "-o", help="Output to JSON file"
     ),
+    test_pypi: bool = typer.Option(
+        False, "--test-pypi", "-T", help="Use TestPyPI instead of PyPI"
+    ),
 ) -> None:
     """List all packages for a PyPI user.
 
     Shows packages where the user is listed as author or maintainer.
     """
-    client = PyPIClient()
+    client = PyPIClient(test_pypi=test_pypi)
+    index_name = "TestPyPI" if test_pypi else "PyPI"
 
     try:
         console.print(f"[blue]Fetching packages for user: {username}[/blue]")
@@ -76,9 +80,12 @@ def list_packages(
 def info(
     package: str = typer.Argument(help="Package name on PyPI"),
     json_output: bool = typer.Option(False, "--json", "-j", help="Output as JSON"),
+    test_pypi: bool = typer.Option(
+        False, "--test-pypi", "-T", help="Use TestPyPI instead of PyPI"
+    ),
 ) -> None:
     """Show detailed information about a PyPI package."""
-    client = PyPIClient()
+    client = PyPIClient(test_pypi=test_pypi)
 
     try:
         pkg = client.get_package(package)
@@ -154,6 +161,9 @@ def audit(
     output: str | None = typer.Option(
         None, "--output", "-o", help="Output audit report to JSON file"
     ),
+    test_pypi: bool = typer.Option(
+        False, "--test-pypi", "-T", help="Use TestPyPI instead of PyPI"
+    ),
 ) -> None:
     """Audit PyPI packages for missing metadata.
 
@@ -168,7 +178,8 @@ def audit(
         console.print("[red]Error: Provide either --user or --package[/red]")
         raise typer.Exit(1)
 
-    client = PyPIClient()
+    client = PyPIClient(test_pypi=test_pypi)
+    index_name = "TestPyPI" if test_pypi else "PyPI"
     pkg_names: list[str] = []
 
     if username:
