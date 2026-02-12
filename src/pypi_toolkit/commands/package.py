@@ -10,7 +10,35 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
+from pypi_toolkit.core.config import get_default_username, set_config_username
 from pypi_toolkit.core.pypi_client import PyPIClient, PyPIAPIError
+
+
+def config(
+    username: str | None = typer.Option(
+        None, "--username", "-u", help="Set default PyPI username"
+    ),
+    show: bool = typer.Option(
+        False, "--show", "-s", help="Show current configuration"
+    ),
+) -> None:
+    """Configure pypi-toolkit settings.
+
+    Set your default PyPI username so you don't need to specify it each time.
+    """
+    if username:
+        set_config_username(username)
+        console.print(f"[green]✓ Default username set to '{username}'[/green]")
+        return
+
+    if show or not username:
+        current = get_default_username()
+        if current:
+            console.print(f"[bold]Default username:[/bold] {current}")
+        else:
+            console.print("[yellow]No default username configured[/yellow]")
+            console.print("\nSet one with:")
+            console.print("  pypi-toolkit package config --username YOUR_USERNAME")
 
 def check_name(
     name: str = typer.Argument(help="Package name to check"),
@@ -41,7 +69,9 @@ console = Console()
 
 
 def list_packages(
-    username: str = typer.Argument(help="PyPI username to list packages for"),
+    username: str | None = typer.Argument(
+        None, help="PyPI username (uses default if not specified)"
+    ),
     output: str | None = typer.Option(
         None, "--output", "-o", help="Output to JSON file"
     ),
@@ -52,7 +82,20 @@ def list_packages(
     """List all packages for a PyPI user.
 
     Shows packages where the user is listed as author or maintainer.
+    If no username provided, uses the configured default.
     """
+    # Use provided username or fall back to default
+    if not username:
+        username = get_default_username()
+        if not username:
+            console.print("[red]Error: No username provided and no default configured[/red]")
+            console.print("\nEither provide a username:")
+            console.print("  pypi-toolkit package list YOUR_USERNAME")
+            console.print("\nOr set a default:")
+            console.print("  pypi-toolkit package config --username YOUR_USERNAME")
+            raise typer.Exit(1)
+        console.print(f"[dim]Using default username: {username}[/dim]")
+
     client = PyPIClient(test_pypi=test_pypi)
     index_name = "TestPyPI" if test_pypi else "PyPI"
 
@@ -178,7 +221,7 @@ def info(
 
 def audit(
     username: str | None = typer.Option(
-        None, "--user", "-u", help="Audit all packages by this PyPI user"
+        None, "--user", "-u", help="Audit packages by PyPI user (uses default if not specified)"
     ),
     packages: list[str] | None = typer.Option(
         None, "--package", "-p", help="Package name(s) to audit"
@@ -198,10 +241,18 @@ def audit(
     - Missing GitHub/source URL
     - Missing documentation URL
     - Missing Python version requirement
+
+    If no --user or --package specified, uses configured default username.
     """
+    # If neither provided, try default username
     if not username and not packages:
-        console.print("[red]Error: Provide either --user or --package[/red]")
-        raise typer.Exit(1)
+        username = get_default_username()
+        if not username:
+            console.print("[red]Error: Provide --user, --package, or configure a default username[/red]")
+            console.print("\nSet a default with:")
+            console.print("  pypi-toolkit package config --username YOUR_USERNAME")
+            raise typer.Exit(1)
+        console.print(f"[dim]Using default username: {username}[/dim]")
 
     client = PyPIClient(test_pypi=test_pypi)
     index_name = "TestPyPI" if test_pypi else "PyPI"
