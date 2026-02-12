@@ -22,10 +22,23 @@ uv pip install pypi-toolkit
 
 ## Usage
 
+### Configure default username
+
+```bash
+# Set your default PyPI username
+pypi-toolkit package config --username your-username
+
+# Show current configuration
+pypi-toolkit package config --show
+```
+
 ### List your packages
 
 ```bash
-# List all packages for a PyPI user
+# List all packages (uses default username)
+pypi-toolkit package list
+
+# Or specify a username
 pypi-toolkit package list your-username
 
 # Save to JSON
@@ -45,14 +58,17 @@ pypi-toolkit package info requests --json
 ### Audit packages
 
 ```bash
-# Audit all packages by a user
+# Audit your packages (uses default username)
+pypi-toolkit package audit
+
+# Audit a specific user's packages
 pypi-toolkit package audit --user your-username
 
 # Audit specific packages
 pypi-toolkit package audit --package requests --package flask
 
 # Save audit report
-pypi-toolkit package audit --user your-username --output audit.json
+pypi-toolkit package audit --output audit.json
 ```
 
 ### Check name availability
