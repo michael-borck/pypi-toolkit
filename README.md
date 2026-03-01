@@ -1,5 +1,9 @@
 # pypi-toolkit
 
+<!-- BADGES:START -->
+[![audit](https://img.shields.io/badge/-audit-blue?style=flat-square)](https://github.com/topics/audit) [![cli](https://img.shields.io/badge/-cli-blue?style=flat-square)](https://github.com/topics/cli) [![metadata](https://img.shields.io/badge/-metadata-blue?style=flat-square)](https://github.com/topics/metadata) [![package-management](https://img.shields.io/badge/-package--management-blue?style=flat-square)](https://github.com/topics/package-management) [![pypi](https://img.shields.io/badge/-pypi-blue?style=flat-square)](https://github.com/topics/pypi) [![python](https://img.shields.io/badge/-python-3776ab?style=flat-square)](https://github.com/topics/python) [![toolkit](https://img.shields.io/badge/-toolkit-blue?style=flat-square)](https://github.com/topics/toolkit)
+<!-- BADGES:END -->
+
 PyPI package portfolio management and auditing toolkit.
 
 ## Features
